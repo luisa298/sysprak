@@ -21,12 +21,11 @@ int
 main(int argc, char **argv){
   int socketFD;
   
-//  if(checkForID(argc, argv[1])){
+  if(checkForID(argc, argv[1])){
     socketFD = connector();
-    performConnection(socketFD, "50af6c2e74be8");
-//  }
-//  else
-//    return EXIT_FAILURE;
+    performConnection(socketFD, argv[1]);
+  } else
+    return EXIT_FAILURE;
   
   close(socketFD);
   return EXIT_SUCCESS;
