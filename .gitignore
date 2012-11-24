@@ -1,0 +1,5 @@
+# .gitignore-file for sysprak
+.DS_Store   # damn os x status files
+*.o         # object files generally don't need to get committed
+/.*         # hidden dirs gcc creates under os x for no reason
+*~          # any kind of shitty temporary files is greatly unnecessary
