@@ -43,8 +43,9 @@ performConnection(int socketFD, char *gameID){
   //   return EXIT_SUCCESS;
   // }
   i = 0;
-  while(subargv[i] != NULL)
-    fprintf(stdout, "%s", subargv[i++]);
+  fprintf(stdout, "%s\n", subargv[i]);
+  // while(subargv[i] != NULL)
+  //   fprintf(stdout, "%s", subargv[i++]);
   fprintf(stdout, "%i\n", readyflag);
   
   // Behandlung von Abbruchsignal durch Server
@@ -105,8 +106,7 @@ recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
     return EXIT_FAILURE;
   }
   stringSplit(msg, argv, "\n");
-  while(stringSplit(argv[i], subargv, " "))
-    i++;
+  while(stringSplit(argv[i++], subargv, " "));
   
   if(*subargv[0] == '+')
     return 1;
@@ -130,7 +130,8 @@ sendToServer(int socketFD, char *msg){
   return size;
 }
 
-int stringSplit(char *string, char **argv, char *delim){   // argv muss schon alloziiert sein
+int
+stringSplit(char *string, char **argv, char *delim){   // argv muss schon alloziiert sein
   int i = 0;
   
   char *temp;
@@ -153,4 +154,3 @@ int stringSplit(char *string, char **argv, char *delim){   // argv muss schon al
   
   return i;
 }
-
