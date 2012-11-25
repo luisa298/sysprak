@@ -107,6 +107,9 @@ recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
   stringSplit(msg, argv, "\n");
   while(stringSplit(argv[i], subargv, " "))
     fprintf(stdout, "%s\n", argv[i++]);
+  i = 0;
+  while(subargv[i] != NULL)
+    fprintf(stdout, "%s\n", subargv[i++]);
   
   if(*subargv[0] == '+')
     return 1;
