@@ -43,6 +43,8 @@ performConnection(int socketFD, char *gameID){
   //   return EXIT_SUCCESS;
   // }
   
+  fprintf(stdout, "%i\n", readyflag);
+  
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
     fprintf(stdout, "Server schickt Fehler:\n");
@@ -93,7 +95,7 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
   return size;
 }
 
-size_t
+int
 recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
   int i = 0;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
@@ -114,7 +116,7 @@ recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
   return EXIT_FAILURE;
 }
 
-size_t
+int
 sendToServer(int socketFD, char *msg){
   size_t size = strlen(msg);
   fprintf(stdout, "Sende %s", msg);
