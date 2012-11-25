@@ -3,32 +3,48 @@
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
-//  char recv_msg[BUFLEN], *send_msg;
+  char recv_msg[BUFLEN];
+//  char *send_msg;
 //  send_msg = (char *) malloc(BUFLEN*sizeof(char));
   int i;
-  char **argv;
   // argv alloziieren
+  char **argv;
   if((argv = (char **) malloc(ARGS * sizeof(char *))) == NULL){
     fprintf(stdout, "out of memory\n");
     abort();
   }
-  for(i = 0; i < 6; i++){
+  for(i = 0; i < ARGS; i++){
     if((argv[i] = (char *) malloc(BUFLEN * sizeof(char))) == NULL){
       fprintf(stdout, "out of memory\n");
       abort();      
     }
   }
-//  ssize_t size;
+  // subargv alloziieren
+  char **subargv;
+  if((subargv = (char **) malloc(ARGS * sizeof(char *))) == NULL){
+    fprintf(stdout, "out of memory\n");
+    abort();
+  }
+  for(i = 0; i < ARGS; i++){
+    if((subargv[i] = (char *) malloc(BUFLEN * sizeof(char))) == NULL){
+      fprintf(stdout, "out of memory\n");
+      abort();      
+    }
+  }
+  ssize_t size;
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, gameID);
-  fprintf(stdout, "%i\n", readyflag);
   
-  // while(recvFrServer(socketFD, recv_msg, argv) > 0){
-  //   
-  //   
-  //   memset(recv_msg, 0, BUFLEN);
-  // }
+  while(readyflag && (size = recvFrServer(socketFD, recv_msg, argv, subargv))){
+    fprintf(stdout, "%s\n", subargv[1]);
+    
+    memset(recv_msg, 0, BUFLEN);
+    return EXIT_SUCCESS;
+  }
+  
+  // Behandlung von Abbruchsignal durch Server
+  if(size == 0){}
   
   return EXIT_SUCCESS;
 }
@@ -53,7 +69,7 @@ openingHandler(int socketFD, char **argv, char *gameID){
     return openingHandler(socketFD, argv, gameID);
   } else if(strcmp(argv[0], SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
-    fprintf(stdout, "Sende dem Server die Game-%s", msg);
+    fprintf(stdout, "Server verlangt Game-ID.\nSende dem Server die Game-%s", msg);
     size = strlen(msg);
     if(send(socketFD, msg, size, 0) == -1){
       perror("send() in openingHandler gescheitert");
@@ -68,16 +84,19 @@ openingHandler(int socketFD, char **argv, char *gameID){
 }
 
 size_t
-recvFrServer(int socketFD, char *msg, char **argv){
+recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
+  int i = 0;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() gescheitert");
     return EXIT_FAILURE;
   }
-  stringSplit(msg, argv, " \n");
+  stringSplit(msg, argv, "\n");
+  while(stringSplit(argv[i], subargv, " "))
+    i++;
   
-  if(*argv[0] == '+')
+  if(*subargv[0] == '+')
     return 1;
-  else if(*argv[0] == '-')
+  else if(*subargv[0] == '-')
     return 0;
   else
     return EXIT_FAILURE;
