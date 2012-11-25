@@ -50,7 +50,7 @@ openingHandler(int socketFD, char **argv, char *gameID){
     }
     fprintf(stdout, "Opening erfolgt.\n");
     return openingHandler(socketFD, argv, gameID);
-  } else if(strcmp(msg, SRV_ACCEPTANCE) == 0){
+  } else if(strcmp(argv[0], SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
     size = strlen(msg);
     if(send(socketFD, msg, size, 0) == -1){

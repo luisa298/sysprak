@@ -13,14 +13,14 @@ connector(){
   hints.ai_family = AF_INET;                // struct ausfuellen
   hints.ai_socktype = SOCK_STREAM;
 
-  fprintf(stdout, "getaddrinfo()...\n");
+//  fprintf(stdout, "getaddrinfo()...\n");
   // getaddrinfo() aufrufen, um struct sockaddr zu befuellen
   if(getaddrinfo(HOSTNAME, PORTNUMBER, &hints, &result) != 0){
     perror("getaddrinfo() call failed");
     return EXIT_FAILURE;
   }
 
-  fprintf(stdout, "socket() call...\n");
+//  fprintf(stdout, "socket() call...\n");
   // socket() aufrufen, um den connection socket vorzubereiten
   if((socketFD = socket(result->ai_family, result->ai_socktype,
                   result->ai_protocol)) == -1){
@@ -28,7 +28,7 @@ connector(){
     return EXIT_FAILURE;
   }
 
-  fprintf(stdout, "connect()...\n");
+//  fprintf(stdout, "connect()...\n");
   // connect() aufrufen, um zum Server zu connecten
   if(connect(socketFD, result->ai_addr, result->ai_addrlen) == -1){
     close(socketFD);
