@@ -42,8 +42,8 @@ performConnection(int socketFD, char *gameID){
   //   return EXIT_SUCCESS;
   // }
   
-  // while(subargv[i] != NULL)
-  //   fprintf(stdout, "%s", subargv[i++]);
+  while(subargv[i] != NULL)
+    fprintf(stdout, "%s", subargv[i++]);
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
