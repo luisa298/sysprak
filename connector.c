@@ -3,7 +3,7 @@
 int 
 connector(){
   
-  fprintf(stdout, "Client aufgerufen.");
+  fprintf(stdout, "Client aufgerufen.\n\n");
   
   // Socket vorbereiten
   int socketFD;                             // Socket FileDeskriptor
