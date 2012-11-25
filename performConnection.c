@@ -36,7 +36,7 @@ performConnection(int socketFD, char *gameID){
 int
 openingHandler(int socketFD, char **argv, char *gameID){
   char msg[BUFLEN];
-  ;
+  size_t size;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() in openingHandler gescheitert");
     return EXIT_FAILURE;
@@ -57,7 +57,7 @@ openingHandler(int socketFD, char **argv, char *gameID){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
-    fprintf(stdout, "Acceptance erfolgt.\n")
+    fprintf(stdout, "Acceptance erfolgt.\n");
     return 1;
   } else
     return 0;
@@ -71,7 +71,7 @@ recvFrServer(int socketFD, char *msg, char **argv){
     perror("recv() gescheitert");
     return EXIT_FAILURE;
   }
-  stringSplit(msg, argv);
+  stringSplit(msg, argv, " \n");
   
   if(*argv[0] == '+')
     return 1;
