@@ -99,6 +99,7 @@ receive(int socketFD, char **argv, char **subargv){
   }
   stringSplit(msg, argv, "\n");
   if(*argv[0] == '+'){
+    fprintf(stdout, "gib laut\n");
     int i = 0;
     while(stringSplit(argv[i++], subargv, " "));
     return 1;
