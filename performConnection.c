@@ -42,7 +42,7 @@ performConnection(int socketFD, char *gameID){
   //   memset(recv_msg, 0, BUFLEN);
   //   return EXIT_SUCCESS;
   // }
-  i = 1;
+  i = 0;
   while(subargv[i] != NULL)
     fprintf(stdout, "%s", subargv[i++]);
   fprintf(stdout, "%i\n", readyflag);
