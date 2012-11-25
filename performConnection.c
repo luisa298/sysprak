@@ -44,20 +44,22 @@ openingHandler(int socketFD, char **argv, char *gameID){
   stringSplit(msg, argv, "\n");
   fprintf(stdout, "Empfangene Nachricht: %s\n", argv[0]);
   if(strcmp(argv[0], SRV_OPENING) == 0){
+    fprintf(stdout, "Sende dem Server die Nachricht %s", CLT_OPENING);
     if(send(socketFD, CLT_OPENING, strlen(CLT_OPENING), 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
-    fprintf(stdout, "Opening erfolgt.\n");
+    fprintf(stdout, "\nDer Server hat unseren Client v1.0 akzeptiert.\n");
     return openingHandler(socketFD, argv, gameID);
   } else if(strcmp(argv[0], SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
+    fprintf(stdout, "Sende dem Server die Game-%s", msg);
     size = strlen(msg);
     if(send(socketFD, msg, size, 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
-    fprintf(stdout, "Acceptance erfolgt.\n");
+    fprintf(stdout, "\nID gesendet.\n");
     return 1;
   } else
     return 0;
