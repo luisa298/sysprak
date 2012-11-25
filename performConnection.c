@@ -35,13 +35,13 @@ performConnection(int socketFD, char *gameID){
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, subargv, gameID);
-  
-  while(readyflag && (readyflag = recvFrServer(socketFD, recv_msg, argv, subargv))){
-    fprintf(stdout, "%s\n", subargv[1]);
-    
-    memset(recv_msg, 0, BUFLEN);
-    return EXIT_SUCCESS;
-  }
+  readyflag = recvFrServer(socketFD, recv_msg, argv, subargv);
+  // while(readyflag && (readyflag = recvFrServer(socketFD, recv_msg, argv, subargv))){
+  //   fprintf(stdout, "%s\n", subargv[1]);
+  //   
+  //   memset(recv_msg, 0, BUFLEN);
+  //   return EXIT_SUCCESS;
+  // }
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
