@@ -41,10 +41,9 @@ openingHandler(int socketFD, char **argv, char *gameID){
     perror("recv() in openingHandler gescheitert");
     return EXIT_FAILURE;
   }
+  fprintf(stdout, "Empfangene Nachricht: %s", msg;)
   if(strcmp(msg, SRV_OPENING) == 0){
-    strcpy(msg, CLT_OPENING);
-    size = strlen(msg);
-    if(send(socketFD, msg, size, 0) == -1){
+    if(send(socketFD, CLT_OPENING, strlen(CLT_OPENING), 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
