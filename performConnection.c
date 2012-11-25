@@ -43,7 +43,6 @@ performConnection(int socketFD, char *gameID){
   //   return EXIT_SUCCESS;
   // }
   i = 0;
-  fprintf(stdout, "%s\n", subargv[i]);
   // while(subargv[i] != NULL)
   //   fprintf(stdout, "%s", subargv[i++]);
   fprintf(stdout, "%i\n", readyflag);
@@ -106,7 +105,8 @@ recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
     return EXIT_FAILURE;
   }
   stringSplit(msg, argv, "\n");
-  while(stringSplit(argv[i++], subargv, " "));
+  while(stringSplit(argv[i], subargv, " "))
+    fprintf(stdout, "%s\n", argv[i++]);
   
   if(*subargv[0] == '+')
     return 1;
