@@ -44,14 +44,13 @@ performConnection(int socketFD, char *gameID){
   
   // while(subargv[i] != NULL)
   //   fprintf(stdout, "%s", subargv[i++]);
-  fprintf(stdout, "%i\n", readyflag);
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
     fprintf(stdout, "Server schickt Fehler:\n");
     i = 1;
-    while(subargv[i] != NULL)
-      fprintf(stdout, "%s", subargv[i++]);
+    while(argv[i] != NULL)
+      fprintf(stdout, "%s", argv[i++]);
     fprintf(stdout, "\n\nWir bitten, dies zu entschuldigen.\n\n\n");
     return EXIT_FAILURE;
   }
