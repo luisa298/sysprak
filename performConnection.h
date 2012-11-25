@@ -23,7 +23,9 @@
 #define SRV_ACCEPTANCE "+ Client version accepted - please send Game-ID to join\n"
 
 int performConnection(int socketFD, char *gameID);
-int stringSplit(char *string, char **argv);   // returnt argc
-
+int openingHandler(int socketFD, char **argv, char *gameID);
+size_t recvFrServer(int socketFD, char *msg, char **argv);    // empfaengt und splittet
+size_t sendToServer(int socketFD, char *msg);                 // sendet und fehlert bei Fehlschlag
+int stringSplit(char *string, char **argv);                   // returnt argc
 
 #endif

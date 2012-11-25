@@ -19,168 +19,80 @@ performConnection(int socketFD, char *gameID){
     }
   }
   ssize_t size;
+  int readyflag;
   
-  // opening
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in opening");
-    return EXIT_FAILURE;
-  }
-  if(strcmp(recv_msg, SRV_OPENING) == 0){
-    fprintf(stdout, "Der Server v1.0 akzeptiert Verbindungen.\n");
-    size = strlen(CLT_OPENING);
-    strncpy(send_msg, CLT_OPENING, size);
-    fprintf(stdout, "Sende dem Server %s", send_msg);
-    if(send(socketFD, send_msg, size, 0) == -1){
-      perror("error send()ing");
-      fprintf(stdout, "%s", send_msg);
-      return EXIT_FAILURE;
-    }
-  } else{
-    fprintf(stdout, "Unerwartete Nachricht vom Server bei Opening\n");
-    return EXIT_FAILURE;
-  }
-  memset(recv_msg, 0, BUFLEN);
-  memset(send_msg, 0, BUFLEN);
+  readyflag = openingHandler(socketFD, argv, gameID);
+  fprintf(stdout, "%i\n", readyflag);
   
-  // acceptance
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in acceptance");
-    return EXIT_FAILURE;
-  }
-  fprintf(stdout, "%s", recv_msg);    // wohlformatierung sicherstellen :P
-  if(strcmp(recv_msg, SRV_ACCEPTANCE) == 0){
-    sprintf(send_msg, "%s %s\n", "ID", gameID);
-    fprintf(stdout, "Sende dem Server die Game-%s", send_msg);
-    if(send(socketFD, send_msg, strlen(send_msg), 0) == -1){
-      perror("error send()ing");
-      return EXIT_FAILURE;
-    }
-  } else{
-    fprintf(stdout, "Unerwartete Nachricht vom Server bei Acceptance\n");
-    return EXIT_FAILURE;
-  }
-  memset(recv_msg, 0, BUFLEN);
-  memset(send_msg, 0, BUFLEN);
-  
-  // PLAYING empfangen
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in PLAYING");
-    return EXIT_FAILURE;
-  }
-  recv_msg[size] = '\0';
-  stringSplit(recv_msg, argv);
-  if(*argv[0] == '+' && strcmp(argv[1], "PLAYING") == 0){
-    fprintf(stdout, "Wir spielen %s", argv[2]);
-    memset(recv_msg, 0, BUFLEN);
-  }
-  
-  // Spielname empfangen
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in PLAYING (inner section)");
-    return EXIT_FAILURE;
-  }
-  stringSplit(recv_msg, argv);
-  if(*argv[0] == '+' && argv[1] != NULL){
-    fprintf(stdout, "Der Name des Spiels lautet %s", argv[1]);
-  } else{
-      fprintf(stdout, "server schickt fehler\n");
-      return EXIT_FAILURE;
-  }
-  memset(recv_msg, 0, BUFLEN);
-    
-  // PLAYER schicken
-  strcpy(send_msg, "PLAYER\n");
-  size = strlen(send_msg);
-  fprintf(stdout, "Sende %s", send_msg);
-  if(send(socketFD, send_msg, size, 0) == -1){
-    perror("send()ing von PLAYER gescheitert");
-    return EXIT_FAILURE;
-  }
-  memset(send_msg, 0, BUFLEN);
-  
-  // YOU empfangen
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in YOU");
-    return EXIT_FAILURE;
-  }
-//  fprintf(stdout, "%s", recv_msg);
-  stringSplit(recv_msg, argv);
-  if(*argv[0] == '+' && strcmp(argv[1], "YOU") == 0){
-    fprintf(stdout, "Sie sind Spieler %i. Sie spielen die Farbe %s", atoi(argv[2]), argv[3]);
-  } else{
-      fprintf(stdout, "server schickt fehler\n");
-      return EXIT_FAILURE;
-  }
-  memset(recv_msg, 0, BUFLEN);
-    
-  // TOTAL empfangen
-  if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-    perror("error recv()ing in TOTAL");
-    return EXIT_FAILURE;
-  }
-  fprintf(stdout, "%s", recv_msg);
-//  stringSplit(recv_msg, argv);
-  // if(*argv[0] == '+' && strcmp(argv[1], "TOTAL") == 0){
-  //   fprintf(stdout, "Gesamtzahl Spieler: %i\n", atoi(argv[2]));
-  // } else{
-  //     fprintf(stdout, "server schickt fehler\n");
-  //     return EXIT_FAILURE;
+  // while(recvFrServer(socketFD, recv_msg, argv) > 0){
+  //   
+  //   
+  //   memset(recv_msg, 0, BUFLEN);
   // }
-  memset(recv_msg, 0, BUFLEN);
-  
-  // // anderen Spieler empfangen
-  // if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-  //   perror("error recv()ing in TOTAL(1)");
-  //   return EXIT_FAILURE;
-  // }
-  // fprintf(stdout, "%s", recv_msg);
-  // stringSplit(recv_msg, argv);
-  // if(*argv[0] == '+'){
-  //   fprintf(stdout, "Spieler %i spielt %s und ist Bereit bei 1, Nicht Bereit bei 0: %i\n", atoi(argv[1]), argv[2], atoi(argv[3]));
-  // } else{
-  //     fprintf(stdout, "server schickt fehler\n");
-  //     return EXIT_FAILURE;
-  // }
-  // memset(recv_msg, 0, BUFLEN);
-  // 
-  // // ENDPLAYERS empfangen
-  // if((size = recv(socketFD, recv_msg, BUFLEN-1, 0)) == -1){
-  //   perror("error recv()ing in ENDPLAYERS");
-  //   return EXIT_FAILURE;
-  // }
-  // fprintf(stdout, "%s", recv_msg);
-  // stringSplit(recv_msg, argv);
-  // if(*argv[0] == '+' && strcmp(argv[1], "ENDPLAYERS\n") == 0){
-  //   fprintf(stdout, "Prolog beendet.\n");
-  //   return EXIT_SUCCESS;
-  // } else{
-  //     fprintf(stdout, "server schickt fehler\n");
-  //     return EXIT_FAILURE;
-  // }
-  // memset(recv_msg, 0, BUFLEN);
-  
-  // fehlerbehandlung draussen
-  if(size == -1){
-    perror("error while recv()ing");
-    return EXIT_FAILURE;
-  }
-  
-  // server sendet fehlermessage
-  if(recv_msg[0] == '-'){
-    stringSplit(recv_msg, argv);
-    if(strcmp(argv[1], "TIMEOUT") == 0){
-      perror("server sendet TIMEOUT");
-      return EXIT_FAILURE;
-    } else{
-      perror("server sendet fehler");
-      return EXIT_FAILURE;
-    }
-  }
   
   return EXIT_SUCCESS;
 }
 
-int 
+int
+openingHandler(int socketFD, char **argv, char *gameID){
+  char msg[BUFLEN];
+  size_t size;
+  if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
+    perror("recv() in openingHandler gescheitert");
+    return EXIT_FAILURE;
+  }
+  if(strcmp(msg, SRV_OPENING) == 0){
+    strcpy(msg, CLT_OPENING);
+    size = strlen(CLT_OPENING);
+    if(send(socketFD, msg, size, 0) == -1){
+      perror("send() in openingHandler gescheitert");
+      return EXIT_FAILURE;
+    }
+    return openingHandler(socketFD, argv);
+  } else if(strcmp(msg, SRV_ACCEPTANCE) == 0){
+    sprintf(msg, "%s %s\n", "ID", gameID);
+    if(send(socketFD, msg, size, 0) == -1){
+      perror("send() in openingHandler gescheitert");
+      return EXIT_FAILURE;
+    }
+    return 1;
+  } else
+    return 0;
+  
+  return size;
+}
+
+size_t
+recvFrServer(int socketFD, char *msg, char **argv){
+  if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
+    perror("recv() gescheitert");
+    return EXIT_FAILURE;
+  }
+  stringSplit(msg, argv);
+  
+  if(*argv[0] == '+')
+    return 1;
+  else if(*argv[0] == '-')
+    return 0;
+  else
+    return EXIT_FAILURE;
+  
+  return EXIT_FAILURE;
+}
+
+size_t
+sendToServer(int socketFD, char *msg){
+  size_t size = strlen(msg);
+  fprintf(stdout, "Sende %s", msg);
+  if(send(socketFD, msg, size, 0) == -1){
+    perror("send() gescheitert");
+    return -1;
+  }
+  memset(msg, 0, BUFLEN);
+  return size;
+}
+
+int
 stringSplit(char *string, char **argv){   // argv muss schon alloziiert sein
   int i = 0;
   
