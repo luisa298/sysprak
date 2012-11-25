@@ -40,8 +40,8 @@ performConnection(int socketFD, char *gameID){
   //   return EXIT_SUCCESS;
   // }
   i = 0;
-  while(subargv[i] != NULL)
-    fprintf(stdout, "%s\n", subargv[i++]);
+  while(argv[i] != NULL)
+    fprintf(stdout, "%s\n", argv[i++]);
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
@@ -98,12 +98,8 @@ receive(int socketFD, char **argv, char **subargv){
     return EXIT_FAILURE;
   }
   stringSplit(msg, argv, "\n");
-  if(*argv[0] == '+'){
-    int i = 0;
-    while(stringSplit(argv[i], subargv, " "))
-      fprintf(stdout, "%s\n", argv[i]);;
+  if(*argv[0] == '+')
     return 1;
-  }
   else if(*argv[0] == '-')
     return 0;
   else
