@@ -48,7 +48,7 @@ performConnection(int socketFD, char *gameID){
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
     fprintf(stdout, "Server schickt Fehler:\n");
-    i = 1;
+    i = 0;
     while(argv[i] != NULL)
       fprintf(stdout, "%s", argv[i++]);
     fprintf(stdout, "\n\nWir bitten, dies zu entschuldigen.\n\n\n");
