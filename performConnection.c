@@ -96,7 +96,6 @@ receive(int socketFD, char **argv, char **subargv){
     return EXIT_FAILURE;
   }
   stringSplit(msg, argv, "\n");
-  *argv[strlen(argv[0])] = '\0';
   if(*argv[0] == '+')
     return 1;
   else if(*argv[0] == '-')
