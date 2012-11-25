@@ -3,8 +3,7 @@
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
-//  char *send_msg;
-//  send_msg = (char *) malloc(BUFLEN*sizeof(char));
+//  char *send_msg = (char *) malloc(BUFLEN*sizeof(char));
   int i;
   // argv alloziieren
   char **argv;
@@ -29,8 +28,7 @@ performConnection(int socketFD, char *gameID){
       fprintf(stdout, "out of memory\n");
       abort();      
     }
-  }
-//  ssize_t size;
+    }
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, subargv, gameID);
@@ -43,7 +41,7 @@ performConnection(int socketFD, char *gameID){
   // }
   i = 0;
   while(subargv[i] != NULL)
-    fprintf(stdout, "%s", subargv[i++]);
+    fprintf(stdout, "%s\n", subargv[i++]);
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
@@ -94,7 +92,6 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
 
 int
 receive(int socketFD, char **argv, char **subargv){
-  int i = 0;
   char msg[BUFLEN];
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() gescheitert");
@@ -102,6 +99,7 @@ receive(int socketFD, char **argv, char **subargv){
   }
   stringSplit(msg, argv, "\n");
   if(*argv[0] == '+'){
+    int i = 0;
     while(stringSplit(argv[i++], subargv, " "));
     return 1;
   }
