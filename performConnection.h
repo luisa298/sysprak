@@ -18,9 +18,9 @@
 #define BUFLEN 128
 #define ARGS 6
 
-#define SRV_OPENING "+ MNM Gameserver v1.0 accepting connections\n"
+#define SRV_OPENING "+ MNM Gameserver v1.0 accepting connections"
 #define CLT_OPENING "VERSION 1.0\n"
-#define SRV_ACCEPTANCE "+ Client version accepted - please send Game-ID to join\n"
+#define SRV_ACCEPTANCE "+ Client version accepted - please send Game-ID to join"
 
 int performConnection(int socketFD, char *gameID);
 int openingHandler(int socketFD, char **argv, char *gameID);
