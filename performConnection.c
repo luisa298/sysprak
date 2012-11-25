@@ -3,8 +3,8 @@
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
-  char recv_msg[BUFLEN], *send_msg;
-  send_msg = (char *) malloc(BUFLEN*sizeof(char));
+//  char recv_msg[BUFLEN], *send_msg;
+//  send_msg = (char *) malloc(BUFLEN*sizeof(char));
   int i;
   char **argv;
   // argv alloziieren
@@ -18,7 +18,7 @@ performConnection(int socketFD, char *gameID){
       abort();      
     }
   }
-  ssize_t size;
+//  ssize_t size;
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, gameID);
@@ -43,14 +43,16 @@ openingHandler(int socketFD, char **argv, char *gameID){
   }
   if(strcmp(msg, SRV_OPENING) == 0){
     strcpy(msg, CLT_OPENING);
-    size = strlen(CLT_OPENING);
+    size = strlen(msg);
     if(send(socketFD, msg, size, 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
-    return openingHandler(socketFD, argv);
+    fprintf(stdout, "hello\n");
+    return openingHandler(socketFD, argv, gameID);
   } else if(strcmp(msg, SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
+    size = strlen(msg);
     if(send(socketFD, msg, size, 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
