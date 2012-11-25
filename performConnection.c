@@ -34,8 +34,8 @@ performConnection(int socketFD, char *gameID){
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, subargv, gameID);
-  readyflag = recvFrServer(socketFD, argv, subargv);
-  // while(readyflag && (readyflag = recvFrServer(socketFD, recv_msg, argv, subargv))){
+  readyflag = receive(socketFD, argv, subargv);
+  // while(readyflag && (readyflag = receive(socketFD, recv_msg, argv, subargv))){
   //   fprintf(stdout, "%s\n", subargv[1]);
   //   
   //   memset(recv_msg, 0, BUFLEN);
@@ -47,11 +47,8 @@ performConnection(int socketFD, char *gameID){
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
-    fprintf(stdout, "Server schickt Fehler:\n");
-    i = 0;
-    while(argv[i] != NULL)
-      fprintf(stdout, "%s", argv[i++]);
-    fprintf(stdout, "\n\nWir bitten, dies zu entschuldigen.\n\n\n");
+    fprintf(stdout, "Server schickt Fehler:\n%s\n", argv[0]);
+    fprintf(stdout, "\nWir bitten, dies zu entschuldigen.\n\n\n");
     return EXIT_FAILURE;
   }
   
@@ -96,7 +93,7 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
 }
 
 int
-recvFrServer(int socketFD, char **argv, char **subargv){
+receive(int socketFD, char **argv, char **subargv){
   int i = 0;
   char msg[BUFLEN];
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
