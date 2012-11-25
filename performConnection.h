@@ -24,7 +24,7 @@
 
 int performConnection(int socketFD, char *gameID);
 int openingHandler(int socketFD, char **argv, char **subargv, char *gameID);
-int recvFrServer(int socketFD, char *msg, char **argv, char **subargv);    // empfaengt und splittet
+int recvFrServer(int socketFD, char **argv, char **subargv);    // empfaengt und splittet
 int sendToServer(int socketFD, char *msg);                 // sendet und fehlert bei Fehlschlag
 int stringSplit(char *string, char **argv, char *delim);      // returnt argc
 

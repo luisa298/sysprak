@@ -3,7 +3,6 @@
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
-  char recv_msg[BUFLEN];
 //  char *send_msg;
 //  send_msg = (char *) malloc(BUFLEN*sizeof(char));
   int i;
@@ -35,14 +34,14 @@ performConnection(int socketFD, char *gameID){
   int readyflag;
   
   readyflag = openingHandler(socketFD, argv, subargv, gameID);
-  readyflag = recvFrServer(socketFD, recv_msg, argv, subargv);
+  readyflag = recvFrServer(socketFD, argv, subargv);
   // while(readyflag && (readyflag = recvFrServer(socketFD, recv_msg, argv, subargv))){
   //   fprintf(stdout, "%s\n", subargv[1]);
   //   
   //   memset(recv_msg, 0, BUFLEN);
   //   return EXIT_SUCCESS;
   // }
-  i = 0;
+  
   // while(subargv[i] != NULL)
   //   fprintf(stdout, "%s", subargv[i++]);
   fprintf(stdout, "%i\n", readyflag);
@@ -98,22 +97,19 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
 }
 
 int
-recvFrServer(int socketFD, char *msg, char **argv, char **subargv){
+recvFrServer(int socketFD, char **argv, char **subargv){
   int i = 0;
+  char msg[BUFLEN];
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() gescheitert");
     return EXIT_FAILURE;
   }
   stringSplit(msg, argv, "\n");
-  while(stringSplit(argv[i], subargv, " "))
-    fprintf(stdout, "%s\n", argv[i++]);
-  i = 0;
-  while(subargv[i] != NULL)
-    fprintf(stdout, "%s\n", subargv[i++]);
-  
-  if(*subargv[0] == '+')
+  if(*argv[0] == '+'){
+    while(stringSplit(argv[i++], subargv, " "));
     return 1;
-  else if(*subargv[0] == '-')
+  }
+  else if(*argv[0] == '-')
     return 0;
   else
     return EXIT_FAILURE;
