@@ -36,18 +36,19 @@ performConnection(int socketFD, char *gameID){
 int
 openingHandler(int socketFD, char **argv, char *gameID){
   char msg[BUFLEN];
-  size_t size;
+  ;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() in openingHandler gescheitert");
     return EXIT_FAILURE;
   }
-  fprintf(stdout, "Empfangene Nachricht: %s", msg);
-  if(strcmp(msg, SRV_OPENING) == 0){
+  stringSplit(msg, argv, "\n");
+  fprintf(stdout, "Empfangene Nachricht: %s", argv[0]);
+  if(strcmp(argv[0], SRV_OPENING) == 0){
     if(send(socketFD, CLT_OPENING, strlen(CLT_OPENING), 0) == -1){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
-    fprintf(stdout, "hello\n");
+    fprintf(stdout, "Opening erfolgt.\n");
     return openingHandler(socketFD, argv, gameID);
   } else if(strcmp(msg, SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
@@ -56,6 +57,7 @@ openingHandler(int socketFD, char **argv, char *gameID){
       perror("send() in openingHandler gescheitert");
       return EXIT_FAILURE;
     }
+    fprintf(stdout, "Acceptance erfolgt.\n")
     return 1;
   } else
     return 0;
@@ -93,8 +95,7 @@ sendToServer(int socketFD, char *msg){
   return size;
 }
 
-int
-stringSplit(char *string, char **argv){   // argv muss schon alloziiert sein
+int stringSplit(char *string, char **argv, char *delim){   // argv muss schon alloziiert sein
   int i = 0;
   
   char *temp;
@@ -103,9 +104,6 @@ stringSplit(char *string, char **argv){   // argv muss schon alloziiert sein
   
   char *buffer;
   buffer = (char *) malloc(BUFLEN*sizeof(char));
-  
-  char *delim;
-  delim = " ";
   
   buffer = strtok(temp, delim);
   
@@ -120,3 +118,4 @@ stringSplit(char *string, char **argv){   // argv muss schon alloziiert sein
   
   return i;
 }
+
