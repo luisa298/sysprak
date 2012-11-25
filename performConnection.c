@@ -31,12 +31,12 @@ performConnection(int socketFD, char *gameID){
       abort();      
     }
   }
-  ssize_t size;
+//  ssize_t size;
   int readyflag;
   
-  readyflag = openingHandler(socketFD, argv, gameID);
+  readyflag = openingHandler(socketFD, argv, subargv, gameID);
   
-  while(readyflag && (size = recvFrServer(socketFD, recv_msg, argv, subargv))){
+  while(readyflag && (readyflag = recvFrServer(socketFD, recv_msg, argv, subargv))){
     fprintf(stdout, "%s\n", subargv[1]);
     
     memset(recv_msg, 0, BUFLEN);
@@ -44,13 +44,20 @@ performConnection(int socketFD, char *gameID){
   }
   
   // Behandlung von Abbruchsignal durch Server
-  if(size == 0){}
+  if(readyflag == 0){
+    fprintf(stdout, "Server schickt Fehler:\n");
+    i = 1;
+    while(subargv[i] != NULL)
+      fprintf(stdout, "%s", subargv[i++]);
+    fprintf(stdout, "\n\nWir bitten, dies zu entschuldigen.\n\n\n");
+    return EXIT_FAILURE;
+  }
   
   return EXIT_SUCCESS;
 }
 
 int
-openingHandler(int socketFD, char **argv, char *gameID){
+openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
   char msg[BUFLEN];
   size_t size;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
@@ -66,7 +73,7 @@ openingHandler(int socketFD, char **argv, char *gameID){
       return EXIT_FAILURE;
     }
     fprintf(stdout, "\nDer Server hat unseren Client v1.0 akzeptiert.\n");
-    return openingHandler(socketFD, argv, gameID);
+    return openingHandler(socketFD, argv, subargv, gameID);
   } else if(strcmp(argv[0], SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
     fprintf(stdout, "Server verlangt Game-ID.\nSende dem Server die Game-%s", msg);
@@ -77,8 +84,11 @@ openingHandler(int socketFD, char **argv, char *gameID){
     }
     fprintf(stdout, "\nID gesendet.\n");
     return 1;
-  } else
+  } else{
+    int i = 0;
+    while(stringSplit(argv[i++], subargv, " "));
     return 0;
+  }
   
   return size;
 }
