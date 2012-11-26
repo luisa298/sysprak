@@ -3,7 +3,7 @@
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
-//  char *send_msg = (char *) malloc(BUFLEN*sizeof(char));
+  char *msg = (char *) malloc(BUFLEN*sizeof(char));
   int i;
   // argv alloziieren
   char **argv;
@@ -31,8 +31,8 @@ performConnection(int socketFD, char *gameID){
     }
   int readyflag;
   
-  readyflag = openingHandler(socketFD, argv, subargv, gameID);
-  readyflag = receive(socketFD, argv, subargv);
+  readyflag = openingHandler(socketFD, gameID, argv);
+  readyflag = receive(socketFD, msg, argv);
   // while(readyflag && (readyflag = receive(socketFD, recv_msg, argv, subargv))){
   //   fprintf(stdout, "%s\n", subargv[1]);
   //   
@@ -47,11 +47,14 @@ performConnection(int socketFD, char *gameID){
     return EXIT_FAILURE;
   }
   
+  free(msg);
+  free(argv);
+  free(subargv);
   return EXIT_SUCCESS;
 }
 
 int
-openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
+openingHandler(int socketFD, char *gameID, char **argv){
   char msg[BUFLEN];
   size_t size;
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
@@ -67,7 +70,7 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
       return EXIT_FAILURE;
     }
     fprintf(stdout, "\nDer Server hat unseren Client v1.0 akzeptiert.\n");
-    return openingHandler(socketFD, argv, subargv, gameID);
+    return openingHandler(socketFD, gameID, argv);
   } else if(strcmp(argv[0], SRV_ACCEPTANCE) == 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
     fprintf(stdout, "Server verlangt Game-ID.\nSende dem Server die Game-%s", msg);
@@ -79,8 +82,6 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
     fprintf(stdout, "\nID gesendet.\n");
     return 1;
   } else{
-    int i = 0;
-    while(stringSplit(argv[i++], subargv, " "));
     return 0;
   }
   
@@ -88,8 +89,7 @@ openingHandler(int socketFD, char **argv, char **subargv, char *gameID){
 }
 
 int
-receive(int socketFD, char **argv, char **subargv){
-  char msg[BUFLEN];
+receive(int socketFD, char *msg, char **argv){
   if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
     perror("recv() gescheitert");
     return EXIT_FAILURE;
