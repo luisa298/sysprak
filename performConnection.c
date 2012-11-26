@@ -31,14 +31,20 @@ performConnection(int socketFD, char *gameID){
     }
   int readyflag;
   
+  // Version und Game-ID mit dem Server abklaeren
   readyflag = openingHandler(socketFD, gameID, argv);
-  readyflag = receive(socketFD, msg, argv);
-  // while(readyflag && (readyflag = receive(socketFD, recv_msg, argv, subargv))){
-  //   fprintf(stdout, "%s\n", subargv[1]);
-  //   
-  //   memset(recv_msg, 0, BUFLEN);
-  //   return EXIT_SUCCESS;
-  // }
+  
+  // Spielerdaten mit dem Server austauschen und Prolog beenden
+  while(readyflag && (readyflag = receive(socketFD, msg, argv))){
+    for(i = 0; argv[i] != NULL; i++){
+      stringSplit(argv[i], subargv, " ");
+      fprintf(stdout, "%s\n", subargv[0]);
+      return EXIT_SUCCESS;
+    }
+    
+    memset(msg, 0, BUFLEN);
+    return EXIT_SUCCESS;
+  }
   
   // Behandlung von Abbruchsignal durch Server
   if(readyflag == 0){
