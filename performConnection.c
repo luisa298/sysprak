@@ -1,5 +1,7 @@
 #include "performConnection.h"
 
+
+
 int 
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
