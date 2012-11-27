@@ -39,7 +39,6 @@ performConnection(int socketFD, char *gameID){
     char *farbe;
     for(i = 0; i < readyflag; i++){
       stringSplit(argv[i], subargv, " ");
-      // CODE GOES HERE
       if(playerflag > 1)
         playerflag = printPlayers(playerflag, subargv);
       else{  
@@ -50,7 +49,7 @@ performConnection(int socketFD, char *gameID){
           break;
           case 0:
             fprintf(stdout, "\nServer sendet %s. Damit ist der Prolog beendet.\n\n", subargv[1]);
-            return EXIT_SUCCESS;
+            return EXIT_SUCCESS;  // TEMPORARY SOLUTION
           break;
           case 1:
             if(strcmp(subargv[2], "Dame") != 0){
