@@ -1,6 +1,4 @@
-#include "performConnection.h"
-
-
+ #include "performConnection.h"
 
 int 
 performConnection(int socketFD, char *gameID){
@@ -175,7 +173,7 @@ printPlayers(int count, char **argv){
   farbe = (strcmp(argv[2], "white")) ? "Schwarz" : "Weiss";
   bereitschaft = (atoi(argv[3])) ? "ist bereit" : "ist nicht bereit";
   
-  fprintf(stdout, "Spieler Nr. %i spielt %s und %s.\n", nr, farbe, bereitschaft);
+  fprintf(stdout, "Spieler Nr. %i spielt %s und %s.\n", atoi(argv[1]), farbe, bereitschaft);
   return nr;
 }
 
