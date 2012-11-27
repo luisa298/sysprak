@@ -1,6 +1,7 @@
 #include "connector.h"
 
-int 
+// Netzwerkverbindung zum Server mit einem Socket herstellen, gibt den Socket Filedeskriptor zurück
+int
 connector(){
   
   fprintf(stdout, "\nClient aufgerufen.\n\n");
@@ -9,7 +10,7 @@ connector(){
   int socketFD;                             // Socket FileDeskriptor
   struct addrinfo hints, *result;           // hints und result fuer getaddrinfo()
   
-  memset(&hints, 0, sizeof(hints));         // sicherstellen, dass struct leer ist
+  memset(&hints, 0, sizeof(hints));         // Sicherstellen, dass struct leer ist
   hints.ai_family = AF_INET;                // struct ausfuellen
   hints.ai_socktype = SOCK_STREAM;
 
@@ -36,7 +37,7 @@ connector(){
     return EXIT_FAILURE;
   }
   
-  // diese struct wird nicht mehr gebraucht; weg damit
+  // Diese struct wird nicht mehr gebraucht; weg damit
   freeaddrinfo(result);
   
   // Socket FileDeskriptor wird zurueckgegeben

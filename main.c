@@ -3,7 +3,8 @@
 
 #include <stdbool.h>
 
-bool 
+// Prüft die Game-ID auf syntaktische Gültigkeit
+bool
 checkForID(int argc, char *gameID){
   if(argc != 2){
     fprintf(stdout, "Bitte geben Sie nur eine 13-stellige GameID ohne Leerzeichen als Argument an.\n");
@@ -17,6 +18,7 @@ checkForID(int argc, char *gameID){
   }
 }
 
+// Übergabeparameter ist die Game-ID
 int
 main(int argc, char **argv){
   int socketFD;

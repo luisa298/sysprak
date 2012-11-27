@@ -13,9 +13,10 @@
 
 #include <arpa/inet.h>
 
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-#define PORTNUMBER "1357"
+#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de" // Hostname des Spielservers
+#define PORTNUMBER "1357" // Portnummer des Spielservers
 
+// Netzwerkverbindung zum Server mit einem Socket herstellen
 int connector();
 
 #endif
