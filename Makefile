@@ -1,4 +1,4 @@
-CC = /usr/bin/gcc
+CC = /usr/bin/clang
 CFLAGS = -Wall -Werror -g -pedantic -std=c99 -D_POSIX_SOURCE
 LDFLAGS = -lm
 

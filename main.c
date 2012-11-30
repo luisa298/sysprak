@@ -1,3 +1,9 @@
+#include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
 #include "connector.h"
 #include "performConnection.h"
 
@@ -23,12 +29,12 @@ int
 main(int argc, char **argv){
   int socketFD;
   
-  if(checkForID(argc, argv[1])){
+  // if(checkForID(argc, argv[1])){
     socketFD = connector();
-    performConnection(socketFD, argv[1]);
-  } else
-    return EXIT_FAILURE;
+    performConnection(socketFD, GAMEID);
+    close(socketFD);
+  // } else
+  //   return EXIT_FAILURE;
   
-  close(socketFD);
   return EXIT_SUCCESS;
 }
