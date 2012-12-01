@@ -1,0 +1,11 @@
+
+Client aufgerufen.
+
+Empfangene Nachricht: + MNM Gameserver v1.0 accepting connections
+Sende VERSION 1.0
+Empfangene Nachricht: + Client version accepted - please send Game-ID to join
+Sende ID 50b4aec484805
+Empfangene Nachricht: + PLAYING Dame
+1: 
+Empfangene Nachricht: + NeXtTest
+1: + NeXtTest

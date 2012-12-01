@@ -20,7 +20,7 @@ int
 performConnection(int socketFD, char *gameID){
   // benoetigte variablen
   // int i;
-  char *argv[BUFLEN] = {0};
+  char *argv[BUFLEN];
   // char *subargv[BUFLEN];
   int readyflag = 0;
   
@@ -106,45 +106,45 @@ performConnection(int socketFD, char *gameID){
 int
 openingHandler(int socketFD, char *gameID){
   char msg[BUFLEN] = {0};
-  char *argv[BUFLEN] = {0};
+  char *argv[BUFLEN];
+  int flag;
   
   // Version
-  if(receive(socketFD, argv) > 0){
+  if((flag = receive(socketFD, argv)) > 0){
     sprintf(msg, "%s %s\n", "VERSION", VERSION);
     sendToServer(socketFD, msg);
   } else    
-    return -1;
+    return flag;
   
   //GameID
-  if(receive(socketFD, argv) > 0){
+  if((flag = receive(socketFD, argv)) > 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
     sendToServer(socketFD, msg);
-  } else    
-    return -1;
+  }
   
-  return 1;
+  return flag;
 }
 
 int
 receive(int socketFD, char *argv[]){
-  int flag;
+  int size;
   char msg[BUFLEN] = {0};
-  if(recv(socketFD, msg, BUFLEN-1, 0) == -1){
+  if((size = recv(socketFD, msg, BUFLEN-1, 0)) == -1){
     // fprintf(stdout, "error in %s at %d", __FILE__, __LINE__);
     perror("perror");
     return -1;
   }
   
-  // for(int i = 0; msg[i] != '\0'; i++)
-  //   printf("%c", msg[i]);
+  for(int i = 0; msg[i] != '\0'; i++)  // HIER IST DER LOOP, DER MACHT, DASS ES FUNKTIONIERT
+      printf("%c", msg[i]);            // ich kapier nicht, warum.
   
-  flag = stringSplit(msg, argv, "\n\0");
+  size = stringSplit(msg, argv, "\n");
   
-  for(int i = 0; i < flag; i++)
+  for(int i = 0; i < size; i++)
     fprintf(stdout, "Empfangene Nachricht: %s\n", argv[i]);
   
   if(*argv[0] == '+')
-    return flag;
+    return size;
   else if(*argv[0] == '-')
     return 0;
   else
