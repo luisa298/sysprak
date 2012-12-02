@@ -8,7 +8,7 @@
 
 int performConnection(int socketFD, char *gameID);
 int openingHandler(int socketFD, char *gameID);
-int receive(int socketFD, char *argv[]);                       // empfaengt und splittet
+int receive(int socketFD, char *msg, char *argv[]);            // empfaengt und splittet
 int sendToServer(int socketFD, char *msg);                    // sendet und fehlert bei Fehlschlag
 int checkMsg(char *msg);                                      // checkt Servernachricht
 int printPlayers(int count, char *argv[]);                     // printet Spielerinfo

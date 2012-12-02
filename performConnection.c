@@ -22,15 +22,16 @@ performConnection(int socketFD, char *gameID){
   // int i;
   char *argv[BUFLEN];
   // char *subargv[BUFLEN];
+  char msg[BUFLEN] = {0};
   int readyflag = 0;
   
   // Version und Game-ID mit dem Server abklaeren
   readyflag = openingHandler(socketFD, gameID);
   
-  readyflag = receive(socketFD, argv);
+  readyflag = receive(socketFD, msg, argv);
   printf("%d: %s\n", readyflag, argv[0]);
   
-  readyflag = receive(socketFD, argv);
+  readyflag = receive(socketFD, msg, argv);
   printf("%d: %s\n", readyflag, argv[0]);
   
   // Spielerdaten mit dem Server austauschen und Prolog beenden
@@ -110,14 +111,14 @@ openingHandler(int socketFD, char *gameID){
   int flag;
   
   // Version
-  if((flag = receive(socketFD, argv)) > 0){
+  if((flag = receive(socketFD, msg, argv)) > 0){
     sprintf(msg, "%s %s\n", "VERSION", VERSION);
     sendToServer(socketFD, msg);
   } else    
     return flag;
   
   //GameID
-  if((flag = receive(socketFD, argv)) > 0){
+  if((flag = receive(socketFD, msg, argv)) > 0){
     sprintf(msg, "%s %s\n", "ID", gameID);
     sendToServer(socketFD, msg);
   }
@@ -126,23 +127,23 @@ openingHandler(int socketFD, char *gameID){
 }
 
 int
-receive(int socketFD, char *argv[]){
+receive(int socketFD, char *msg, char *argv[]){
   int size;
-  char msg[BUFLEN] = {0};
+  memset(msg, 0, BUFLEN);
   if((size = recv(socketFD, msg, BUFLEN-1, 0)) == -1){
     // fprintf(stdout, "error in %s at %d", __FILE__, __LINE__);
     perror("perror");
     return -1;
   }
   
-  for(int i = 0; msg[i] != '\0'; i++)  // HIER IST DER LOOP, DER MACHT, DASS ES FUNKTIONIERT
-      printf("%c", msg[i]);            // ich kapier nicht, warum.
+  // for(int i = 0; msg[i] != '\0'; i++)  // HIER IST DER LOOP, DER MACHT, DASS ES FUNKTIONIERT
+  //     printf("%c", msg[i]);            // ich kapier nicht, warum.
   
   size = stringSplit(msg, argv, "\n");
   
   for(int i = 0; i < size; i++)
     fprintf(stdout, "Empfangene Nachricht: %s\n", argv[i]);
-  
+    
   if(*argv[0] == '+')
     return size;
   else if(*argv[0] == '-')
