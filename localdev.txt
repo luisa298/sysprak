@@ -1,0 +1,1 @@
+alias localdev='ssh -L 1357:10.153.99.144:1357 eichf@remote.cip.informatik.uni-muenchen.de'
