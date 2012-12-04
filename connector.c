@@ -1,4 +1,5 @@
 #include "connector.h"
+#include "performConnection.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +14,7 @@
 
 // Netzwerkverbindung zum Server mit einem Socket herstellen, gibt den Socket Filedeskriptor zurück
 int
-connector(){
+connector(char *gameID){
   
   fprintf(stdout, "\nClient aufgerufen.\n\n");
   
@@ -51,6 +52,10 @@ connector(){
   // Diese struct wird nicht mehr gebraucht; weg damit
   freeaddrinfo(result);
   
-  // Socket FileDeskriptor wird zurueckgegeben
-  return socketFD;
+//  openingHandler(socketFD, gameID);
+  performConnection(socketFD, gameID);
+  
+  // 
+  close(socketFD);
+  return EXIT_SUCCESS;
 }
