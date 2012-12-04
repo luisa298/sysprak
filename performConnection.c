@@ -27,7 +27,7 @@ performConnection(int socketFD, char *gameID){
   // benoetigte Variablen
   int i, readyflag, playerflag;
   char *farbe;
-  readyflag = playerflag = 0;
+  readyflag = playerflag = 1;
   
   // Version und Game-ID mit dem Server abklaeren
   readyflag = openingHandler(socketFD, gameID);
@@ -36,7 +36,7 @@ performConnection(int socketFD, char *gameID){
   while(readyflag > 0 && (readyflag = receive(socketFD)) > 0){
     for(i = 0; i < readyflag; i++){
       if(!stringSplit(argv[i], subargv, " ")){
-        fprintf(stdout, "fehler in line %d\n", __LINE__);
+        fprintf(stderr, "fehler in line %d\n", __LINE__);
         readyflag = -1;
         break;
       }
@@ -45,8 +45,8 @@ performConnection(int socketFD, char *gameID){
       else{
         switch(checkMsg(subargv[1])){
           case -1:
-            fprintf(stdout, "Unerwarte Nachricht vom Server oder Protokollfehler.\n\n");
-            return EXIT_FAILURE;
+            fprintf(stderr, "Unerwarte Nachricht vom Server oder Protokollfehler.\n\n");
+            readyflag = -1;
           break;
           case 0:
             fprintf(stdout, "\nServer sendet %s. Damit ist der Prolog beendet.\n\n", subargv[1]);
@@ -54,35 +54,25 @@ performConnection(int socketFD, char *gameID){
           break;
           case 1:
             if(strcmp(subargv[2], GAMEKINDNAME) != 0){
-              fprintf(stdout, "Server schickt %s.\n", subargv[2]);
+              fprintf(stderr, "Server schickt %s.\n", subargv[2]);
               readyflag = -1;
               break;
             }
             fprintf(stdout, "\nWir spielen %s. ", subargv[2]);
             if(argv[++i] == NULL){
-              if(receive(socketFD) > 0){
-                if(!stringSplit(argv[0], subargv, " ")){
-                  fprintf(stdout, "fehler in line %d\n", __LINE__);
-                  readyflag = -1;
-                  break;
-                }
-                fprintf(stdout, "Der Name des Spiels lautet %s.\n\n", subargv[1]);
-                sendToServer(socketFD, "PLAYER\n");
-              } else
-                fprintf(stdout, "Fehler beim Empfangen des Spielnamens.\n");
-            } else if(argv[i] != NULL){
-              if(!stringSplit(argv[i], subargv, " ")){
-                fprintf(stdout, "fehler in line %d\n", __LINE__);
-                readyflag = -1;
-                break;
-              }
-              fprintf(stdout, "Der Name des Spiels lautet %s.\n\n", subargv[1]);
-              sendToServer(socketFD, "PLAYER\n");
-            } else{
-              fprintf(stdout, "fehler in line %d\n", __LINE__);
+              if(receive(socketFD) > 0)
+                fprintf(stdout, "Der Name des Spiels lautet %s.\n\n", argv[0]+2);
+              else
+                fprintf(stderr, "Fehler beim Empfangen des Spielnamens.\n");
+            }
+            else if(argv[i] != NULL)
+              fprintf(stdout, "Der Name des Spiels lautet %s.\n\n", argv[i]+2);
+            else{
+              fprintf(stderr, "fehler in line %d\n", __LINE__);
               readyflag = -1;
               break;
             }
+            sendToServer(socketFD, "PLAYER\n");
           break;
           case 2:
             if(strcmp(subargv[3], "white") == 0)
@@ -90,7 +80,7 @@ performConnection(int socketFD, char *gameID){
             else if(strcmp(subargv[3], "black") == 0)
               farbe = "Schwarz";
             else{
-              fprintf(stdout, "Protokollfehler. %d\n", __LINE__);
+              fprintf(stderr, "Protokollfehler. %d\n", __LINE__);
               readyflag = -1;
               break;
             }
@@ -104,14 +94,14 @@ performConnection(int socketFD, char *gameID){
             if(isdigit(*subargv[2]))
               playerflag = atoi(subargv[2]);
             else{
-              fprintf(stdout, "Protokollfehler. %d\n", __LINE__);
+              fprintf(stderr, "Protokollfehler. %d\n", __LINE__);
               readyflag = -1;
               break;
             }
             fprintf(stdout, "Insgesamt nehmen %i Spieler am Spiel teil:\n", playerflag);
           break;
           default:
-            fprintf(stdout, "Fehler, weißte Bescheid unso\n");
+            fprintf(stderr, "Fehler, weißte Bescheid unso\n");
           break;
         }
       }
@@ -120,13 +110,13 @@ performConnection(int socketFD, char *gameID){
   
   // Behandlung von Fehlermeldung vom Server
   if(readyflag == 0){
-    fprintf(stdout, "Server schickt Fehler:\n%s\n", argv[0]);
+    fprintf(stderr, "Server schickt Fehler:\n%s\n", argv[0]);
     return EXIT_FAILURE;
   }
   
   // Behandlung von Abbruchsignal
   if(readyflag == -1){
-    fprintf(stdout, "Server schickt Abbruch:\n%s\n", argv[0]);
+    fprintf(stderr, "Server schickt Abbruch:\n%s\n", argv[0]);
     return EXIT_FAILURE;
   }
   
@@ -164,8 +154,8 @@ receive(int socketFD){
   
   size = stringSplit(msg, argv, "\n");
   
-  for(int i = 0; i < size; i++)
-    fprintf(stdout, "Empfangene Nachricht: %s\n", argv[i]);
+//  for(int i = 0; i < size; i++)
+//    fprintf(stdout, "Empfangene Nachricht: %s\n", argv[i]);
     
   if(*argv[0] == '+')
     return size;
@@ -211,7 +201,7 @@ printPlayers(int count, char *vector[]){
   else
     return -1;
   
-  if(isdigit(*vector[3]))
+  if(isdigit(*vector[3]) && (atoi(vector[3]) == 0 || atoi(vector[3]) == 1))
     bereitschaft = (atoi(vector[3])) ? "ist bereit" : "ist nicht bereit";
   else
     return -1;

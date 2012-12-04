@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "connector.h"
-#include "performConnection.h"
 
 #include <stdbool.h>
 
@@ -27,14 +26,11 @@ checkForID(int argc, char *gameID){
 // Übergabeparameter ist die Game-ID
 int
 main(int argc, char **argv){
-  int socketFD;
   
-  // if(checkForID(argc, argv[1])){
-    socketFD = connector();
-    performConnection(socketFD, GAMEID);
-    close(socketFD);
-  // } else
-  //   return EXIT_FAILURE;
+   if(checkForID(argc, argv[1])){
+    connector(argv[1]);
+   } else
+     return EXIT_FAILURE;
   
   return EXIT_SUCCESS;
 }
