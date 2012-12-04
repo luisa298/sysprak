@@ -4,31 +4,19 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "connector.h"
-
 #include <stdbool.h>
 
-// Prüft die Game-ID auf syntaktische Gültigkeit
-bool
-checkForID(int argc, char *gameID){
-  if(argc != 2){
-    fprintf(stdout, "Bitte geben Sie nur eine 13-stellige GameID ohne Leerzeichen als Argument an.\n");
-    return false;
-  } else if(strlen(gameID)!=13){
-    fprintf(stdout, "Game-ID hat falsche Laenge\n");
-    return false;
-  }
-  else{
-    return true;
-  }
-}
+#include "service.h"
+#include "connector.h"
 
-// Übergabeparameter ist die Game-ID
+// #define GAMEID "50b4aec484805"
+
 int
 main(int argc, char **argv){
+  settings *toUse = (settings *) malloc(sizeof(settings));
   
-   if(checkForID(argc, argv[1])){
-    connector(argv[1]);
+  if(checkArgs(argc, argv, toUse)){
+    connector(toUse, argv[1]);
    } else
      return EXIT_FAILURE;
   

@@ -1,6 +1,3 @@
-#include "connector.h"
-#include "performConnection.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,9 +9,13 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include "service.h"
+#include "connector.h"
+#include "performConnection.h"
+
 // Netzwerkverbindung zum Server mit einem Socket herstellen, gibt den Socket Filedeskriptor zurück
 int
-connector(char *gameID){
+connector(settings *toUse, char *gameID){
   
   fprintf(stdout, "\nClient aufgerufen.\n\n");
   
@@ -28,7 +29,7 @@ connector(char *gameID){
 
  // fprintf(stdout, "getaddrinfo()...\n");
   // getaddrinfo() aufrufen, um struct sockaddr zu befuellen
-  if(getaddrinfo(HOSTNAME, PORTNUMBER, &hints, &result) != 0){
+  if(getaddrinfo(toUse->hostname, toUse->portnumber, &hints, &result) != 0){
     perror("getaddrinfo() call failed");
     return EXIT_FAILURE;
   }
@@ -53,7 +54,7 @@ connector(char *gameID){
   freeaddrinfo(result);
   
 //  openingHandler(socketFD, gameID);
-  performConnection(socketFD, gameID);
+  performConnection(socketFD, toUse->gamekind, gameID);
   
   // 
   close(socketFD);
