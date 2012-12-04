@@ -4,3 +4,4 @@
 client	    # the executable doesn't need to get committed either
 /.*         # hidden dirs gcc creates under os x for no reason
 *~          # any kind of shitty temporary files is greatly unnecessary
+*.sh	    # shell scripts don't need to be committed
