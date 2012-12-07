@@ -74,7 +74,7 @@ readSettings(char *filename, settings *toUse){
         break;
     }
   }
-  
+  fclose(datei);
   return 1;
 }
 
@@ -120,6 +120,47 @@ sendToServer(int socketFD, char *string){
     return -1;
   }
   return size;
+}
+
+// shared memory segment
+void
+shm(char *conf) {
+    key_t ShmKEY;
+    int ShmID;
+    struct gameInfos  *gameInfo;
+    struct playerInfos *playerInfo;
+
+    // gameInfo anbinden
+    ShmKEY = ftok(conf, 'x');
+    ShmID = shmget(ShmKEY, sizeof(struct gameInfos), IPC_CREAT | 0666);
+
+    if (ShmID < 0) {
+         printf("shmget error\n");
+         exit(1);
+    }
+
+    gameInfo = (struct gameInfos *) shmat(ShmID, NULL, 0);
+    if ((int) gameInfo == -1) {
+         printf("*** shmat error ***\n");
+         exit(1);
+    }
+    printf("gameInfos an Shared Memory Segment anbinden\n");
+
+    //playerInfo anbinden
+    ShmKEY = ftok(conf, 'y');
+        ShmID = shmget(ShmKEY, sizeof(struct playerInfos), IPC_CREAT | 0666);
+
+        if (ShmID < 0) {
+             printf("shmget error\n");
+             exit(1);
+        }
+
+        playerInfo = (struct playerInfos *) shmat(ShmID, NULL, 0);
+        if ((int) gameInfo == -1) {
+             printf("*** shmat error ***\n");
+             exit(1);
+        }
+        printf("playerInfos an Shared Memory Segment anbinden\n");
 }
 
 int
