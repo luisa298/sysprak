@@ -9,11 +9,17 @@
 #include "service.h"
 #include "connector.h"
 
-// #define GAMEID "50b4aec484805"
+// #define GAMEID "50c0d56e226a8"
 
 int
 main(int argc, char **argv){
   settings *toUse = (settings *) malloc(sizeof(settings));
+
+  if(argc < 3){
+	  shm("client.config");
+  } else if(argc == 3) {
+	  shm(argv[2]);
+  }
   
   if(checkArgs(argc, argv, toUse)){
     connector(toUse, argv[1]);
@@ -22,3 +28,4 @@ main(int argc, char **argv){
   
   return EXIT_SUCCESS;
 }
+
