@@ -48,11 +48,11 @@ performConnection(int socketFD, char *gameKind, char *gameID){
           case -1:
             fprintf(stderr, "Unerwarte Nachricht vom Server oder Protokollfehler.\n\n");
             readyflag = -1;
-          break;
+            break;
           case 0:
             fprintf(stdout, "\nServer sendet %s. Damit ist der Prolog beendet.\n\n", subargv[1]);
             return 1;  // Code fuer Dame spielen
-          break;
+            break;
           case 1:
             if(strcmp(subargv[2], gameKind) != 0){
               fprintf(stderr, "Server schickt %s.\n", subargv[2]);
@@ -74,7 +74,7 @@ performConnection(int socketFD, char *gameKind, char *gameID){
               break;
             }
             sendToServer(socketFD, "PLAYER\n");
-          break;
+            break;
           case 2:
             if(strcmp(subargv[3], "white") == 0)
               farbe = "Weiss";
@@ -98,7 +98,7 @@ performConnection(int socketFD, char *gameKind, char *gameID){
                 atoi(subargv[2]), farbe);
             else
               readyflag = -1;
-          break;
+            break;
           case 3:
             if(isdigit(*subargv[2]))
               playerflag = atoi(subargv[2]);
@@ -108,10 +108,10 @@ performConnection(int socketFD, char *gameKind, char *gameID){
               break;
             }
             fprintf(stdout, "Insgesamt nehmen %i Spieler am Spiel teil:\n", playerflag);
-          break;
+            break;
           default:
             fprintf(stderr, "Fehler, weißte Bescheid unso\n");
-          break;
+            break;
         }
       }
     }

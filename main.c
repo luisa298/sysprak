@@ -15,12 +15,6 @@ int
 main(int argc, char **argv){
   settings *toUse = (settings *) malloc(sizeof(settings));
 
-  if(argc < 3){
-	  shm("client.config");
-  } else if(argc == 3) {
-	  shm(argv[2]);
-  }
-  
   if(checkArgs(argc, argv, toUse)){
     connector(toUse, argv[1]);
    } else

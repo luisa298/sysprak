@@ -31,7 +31,7 @@ int readSettings(char *filename, settings *toUse);
 int checkSettings(char *setting);
 int receive(int socketFD, char *msg, char *argv[]);
 int sendToServer(int socketFD, char *string);
-void shm(char *conf);
+int shm(char *conf);
 int stringSplit(char *string, char *vector[], char *delim);
 
 

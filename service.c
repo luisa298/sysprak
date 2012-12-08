@@ -8,39 +8,46 @@
 #include <ctype.h>
 #include <netdb.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
 
 #include "service.h"
 
 int
 checkArgs(int argc, char **argv, settings *toUse){
-  if(argc == 1){
-    
-    fprintf(stderr, "Bitte geben Sie eine 13stellige GameID als Argument an.\n");
-    fprintf(stderr, "Ausserdem kann eine Konfigurationsdatei angegeben werden.\n");
-    return 0;
-    
-  } else if(argc > 1 && strlen(argv[1]) != 13){
-    
-    fprintf(stderr, "GameID muss 13stellig sein.\n");
-    return 0;
-    
+  char *filename;
+  switch(argc){
+    case 1:
+      fprintf(stderr, "Bitte geben Sie eine 13stellige GameID als Argument an.\n");
+      fprintf(stderr, "Ausserdem kann eine Konfigurationsdatei angegeben werden.\n");
+      return 0;
+      break;
+    case 2: 
+    case 3:
+      if(strlen(argv[1]) != 13){
+        fprintf(stderr, "GameID muss 13stellig sein.\n");
+        return 0;
+      }
+      filename = (argc == 2) ? STDCONF : argv[2];
+      break;
+    default:
+      fprintf(stderr, "Zuviele Kommandozeilenargumente.\n");
+      return 0;    
+      break;
   }
   
-  if(argc == 2 && !readSettings(STDCONF, toUse)){
-    
+  if(!readSettings(filename, toUse)){
     fprintf(stderr, "Konfigurationsdatei konnte nicht gelesen werden.\n");
     return 0;
-    
   }
   
-  if(argc == 3 && !readSettings(argv[2], toUse)){
-    
-    fprintf(stderr, "Konfigurationsdatei konnte nicht gelesen werden.\n");
+  if(!shm(filename)){
+    fprintf(stderr, "Shared Memory Bereich konnte nicht reserviert werden.\n");
     return 0;
-    
   }
   
   return 1;
@@ -53,7 +60,7 @@ readSettings(char *filename, settings *toUse){
   FILE *datei;
   
   if((datei = fopen(filename, "r")) == NULL){
-    printf("Fehler beim Oeffnen der Datei.\n");
+//    printf("Fehler beim Oeffnen der Datei.\n");
     return 0;
   }
   
@@ -75,6 +82,7 @@ readSettings(char *filename, settings *toUse){
     }
   }
   fclose(datei);
+  printf("Konfigurationsdatei gelesen.\n");
   return 1;
 }
 
@@ -123,44 +131,46 @@ sendToServer(int socketFD, char *string){
 }
 
 // shared memory segment
-void
+int
 shm(char *conf) {
-    key_t ShmKEY;
-    int ShmID;
-    struct gameInfos  *gameInfo;
-    struct playerInfos *playerInfo;
+  key_t ShmKEY;
+  int ShmID;
+  struct gameInfos  *gameInfo;
+  struct playerInfos *playerInfo;
 
-    // gameInfo anbinden
-    ShmKEY = ftok(conf, 'x');
-    ShmID = shmget(ShmKEY, sizeof(struct gameInfos), IPC_CREAT | 0666);
+  // gameInfo anbinden
+  ShmKEY = ftok(conf, 'x');
+  ShmID = shmget(ShmKEY, sizeof(struct gameInfos), IPC_CREAT | 0666);
 
-    if (ShmID < 0) {
-         printf("shmget error\n");
-         exit(1);
-    }
+  if (ShmID < 0) {
+    printf("shmget error\n");
+    return 0;
+  }
 
-    gameInfo = (struct gameInfos *) shmat(ShmID, NULL, 0);
-    if ((int) gameInfo == -1) {
-         printf("*** shmat error ***\n");
-         exit(1);
-    }
-    printf("gameInfos an Shared Memory Segment anbinden\n");
+  gameInfo = (struct gameInfos *) shmat(ShmID, NULL, 0);
+  if ((int) gameInfo == -1) {
+    printf("*** shmat error ***\n");
+    return 0;
+  }
+  printf("gameInfos an Shared Memory Segment angebunden.\n");
 
-    //playerInfo anbinden
-    ShmKEY = ftok(conf, 'y');
-        ShmID = shmget(ShmKEY, sizeof(struct playerInfos), IPC_CREAT | 0666);
+  //playerInfo anbinden
+  ShmKEY = ftok(conf, 'y');
+  ShmID = shmget(ShmKEY, sizeof(struct playerInfos), IPC_CREAT | 0666);
 
-        if (ShmID < 0) {
-             printf("shmget error\n");
-             exit(1);
-        }
+  if (ShmID < 0) {
+    printf("shmget error\n");
+    return 0;
+  }
 
-        playerInfo = (struct playerInfos *) shmat(ShmID, NULL, 0);
-        if ((int) gameInfo == -1) {
-             printf("*** shmat error ***\n");
-             exit(1);
-        }
-        printf("playerInfos an Shared Memory Segment anbinden\n");
+  playerInfo = (struct playerInfos *) shmat(ShmID, NULL, 0);
+  if ((int) gameInfo == -1) {
+    printf("*** shmat error ***\n");
+    return 0;
+  }
+  printf("playerInfos an Shared Memory Segment angebunden.\n");
+  
+  return 1;
 }
 
 int

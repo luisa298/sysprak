@@ -1,5 +1,5 @@
 CC = /usr/bin/gcc
-CFLAGS = -Wall -Werror -g -pedantic -std=c99 -D_POSIX_SOURCE
+CFLAGS = -Wall -Werror -g -pedantic -std=c99 -D_POSIX_SOURCE -D_SVID_SOURCE
 LDFLAGS = -lm
 
 TARGETS = performConnection connector service
