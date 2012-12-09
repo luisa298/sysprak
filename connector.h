@@ -2,6 +2,6 @@
 #define __connector_h__
 
 // Netzwerkverbindung zum Server mit einem Socket herstellen
-int connector(settings *toUse, char *gameID);
+int connector(settings *toUse, char *gameID, int *pipe_fd);
 
 #endif
