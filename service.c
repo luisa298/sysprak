@@ -20,6 +20,12 @@
 int
 checkArgs(int argc, char **argv, settings *toUse){
   char *filename;
+  
+  if(!readSettings(STDCONF, toUse)){
+    fprintf(stderr, "Standardkononfigurationsdatei konnte nicht gelesen werden.\n");
+    return 0;
+  }
+  
   switch(argc){
     case 1:
       fprintf(stderr, "Bitte geben Sie eine 13stellige GameID als Argument an.\n");
@@ -33,6 +39,10 @@ checkArgs(int argc, char **argv, settings *toUse){
         return 0;
       }
       filename = (argc == 2) ? STDCONF : argv[2];
+      if(argc == 3 && !readSettings(filename, toUse)){
+        fprintf(stderr, "Konfigurationsdatei konnte nicht gelesen werden.\n");
+        return 0;
+      }
       break;
     default:
       fprintf(stderr, "Zuviele Kommandozeilenargumente.\n");
@@ -82,7 +92,7 @@ readSettings(char *filename, settings *toUse){
     }
   }
   fclose(datei);
-  printf("Konfigurationsdatei gelesen.\n");
+  // printf("Konfigurationsdatei gelesen.\n");
   return 1;
 }
 
@@ -148,11 +158,11 @@ shm(char *conf) {
   }
 
   gameInfo = (struct gameInfos *) shmat(ShmID, NULL, 0);
-  if ((int) gameInfo == -1) {
-    printf("*** shmat error ***\n");
-    return 0;
-  }
-  printf("gameInfos an Shared Memory Segment angebunden.\n");
+  // if ((int) gameInfo == -1) {
+  //   printf("*** shmat error ***\n");
+  //   return 0;
+  // }
+  // printf("gameInfos an Shared Memory Segment angebunden.\n");
 
   //playerInfo anbinden
   ShmKEY = ftok(conf, 'y');
@@ -164,11 +174,11 @@ shm(char *conf) {
   }
 
   playerInfo = (struct playerInfos *) shmat(ShmID, NULL, 0);
-  if ((int) gameInfo == -1) {
-    printf("*** shmat error ***\n");
-    return 0;
-  }
-  printf("playerInfos an Shared Memory Segment angebunden.\n");
+  // if ((int) gameInfo == -1) {
+  //   printf("*** shmat error ***\n");
+  //   return 0;
+  // }
+  // printf("playerInfos an Shared Memory Segment angebunden.\n");
   
   return 1;
 }
