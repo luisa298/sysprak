@@ -15,7 +15,7 @@
 
 // Netzwerkverbindung zum Server mit einem Socket herstellen, gibt den Socket Filedeskriptor zurück
 int
-connector(settings *toUse, char *gameID, int *pipe_fd){
+connector(settings *toUse, char *gameID, int pipe_fd[2]){
   
   fprintf(stdout, "\nClient aufgerufen.\n\n");
   
